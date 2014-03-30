@@ -29,10 +29,10 @@ function alert($host, $server_name) {
     $domain = "aestheticpeople.com";
 
     # Now, compose and send your message.
-    $result = $mg->sendMessage($domain, array('from' => 'Server Notification <server_notification@aestheticpeople.com>',
+    /*$result = $mg->sendMessage($domain, array('from' => 'Server Notification <server_notification@aestheticpeople.com>',
         'to' => $to,
         'subject' => $subject,
-        'text' => $message));
+        'text' => $message));*/
     //mail('youremail@gmail.com', 'Monitoring', $host.' down');
 }
 
@@ -51,7 +51,7 @@ foreach($results as $result) {
             'id' => $id
         );
         $MySQL->Update('servers', $var, $where);
-        echo $server_name. ' ('.$host.')' .' Down';
+        echo $server_name. ' ('.$host.')' .' Down'."\n";
         alert($host, $server_name);
     } else {
         $var = array(
@@ -61,7 +61,7 @@ foreach($results as $result) {
             'id' => $id
         );
         $MySQL->Update('servers', $var, $where);
-        echo $server_name. '('.$host.')' .' Up'; //
+        echo $server_name. '('.$host.')' .' Up'."\n"; //
     }
 }
 ?>
