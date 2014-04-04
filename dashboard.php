@@ -101,6 +101,7 @@ $results = $MySQL->Select('servers');
                 <div class="clearfix"></div>
                 <div style="margin: 0 0 10px 0;width: 100%">
                     <a href="javascript:void(0)" class="btn btn-info" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-plus"></span> Add New Server</a>
+                    <a href="dashboard.php" class="btn btn-info"><span class="glyphicon glyphicon-refresh"></span> Reload</a>
                 </div>
                 <div class="clearfix"></div>
                 <div class="table-responsive">
@@ -109,6 +110,10 @@ $results = $MySQL->Select('servers');
                         <tr>
                             <th>Server Name</th>
                             <th>IP Address</th>
+                            <th>Port</th>
+                            <th>Provider Name</th>
+                            <th>Provider Email</th>
+                            <th>Provider Phone</th>
                             <th>Status</th>
                             <th>Action</th>
                         </tr>
@@ -129,6 +134,10 @@ $results = $MySQL->Select('servers');
                                 echo '<tr>';
                                 echo '<td>'.$result['server_name'].'</td>';
                                 echo '<td>'.$result['ip_address'].'</td>';
+                                echo '<td>'.$result['port'].'</td>';
+                                echo '<td>'.$result['provider'].'</td>';
+                                echo '<td>'.$result['email'].'</td>';
+                                echo '<td>'.$result['phone'].'</td>';
                                 echo '<td><button type="button" class="btn '.$class.' btn-sm">'.$status.'</button></td>';
                                 echo '<td>
                                     <a href="delete.php?id='.$result['id'].'" title="Delete">
@@ -175,6 +184,22 @@ $results = $MySQL->Select('servers');
                         <label for="ipAddress">IP</label>
                         <input type="text" class="form-control" id="ipAddress" name="ipAddress" placeholder="IP">
                     </div>
+                    <div class="form-group">
+                        <label for="port">Port</label>
+                        <input type="text" class="form-control" id="port" name="port" placeholder="Port">
+                    </div>
+                    <div class="form-group">
+                        <label for="provider">Provider</label>
+                        <input type="text" class="form-control" id="provider" name="provider" placeholder="Provider">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Provider Email</label>
+                        <input type="text" class="form-control" id="email" name="email" placeholder="Provider Email">
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Provider Phone</label>
+                        <input type="text" class="form-control" id="phone" name="phone" placeholder="Provider Phone">
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
@@ -189,7 +214,11 @@ $results = $MySQL->Select('servers');
     $("#serverInfoSave").click(function(){
         var serverName = $("#serverName").val();
         var ipAddress = $("#ipAddress").val();
-        $.post( "save_server_data.php", { serverName: serverName, ipAddress: ipAddress }, function() {
+        var port = $("#port").val();
+        var provider = $("#provider").val();
+        var email = $("#email").val();
+        var phone = $("#phone").val();
+        $.post( "save_server_data.php", { serverName: serverName, ipAddress: ipAddress, port: port, provider: provider, email: email, phone: phone }, function() {
             $('#myModal').modal('hide');
             setTimeout(function (){
                 location.reload();

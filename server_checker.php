@@ -7,8 +7,8 @@ require_once('include/config.php');
 require 'vendor/autoload.php';
 use Mailgun\Mailgun;
 
-function check($host) {
-    $fp = @fsockopen($host, 80, $errno, $errstr, 10);
+function check($host, $port) {
+    $fp = @fsockopen($host, $port, $errno, $errstr, 10);
     if (!$fp) {
         //echo "$errstr ($errno)\n";
         return false;
@@ -18,7 +18,7 @@ function check($host) {
     }
 }
 
-function alert($host, $server_name) {
+function alert($host, $server_name, $provider_email) {
     $mg = new Mailgun("key-35nnmiuxrw9vwg-ocgthgy4jztyk8b34");
     $email_from = 'server_notification@aestheticpeople.com';
     $to = 'carbontsb@gmail.com';
@@ -29,10 +29,15 @@ function alert($host, $server_name) {
     $domain = "aestheticpeople.com";
 
     # Now, compose and send your message.
-    /*$result = $mg->sendMessage($domain, array('from' => 'Server Notification <server_notification@aestheticpeople.com>',
+    $result = $mg->sendMessage($domain, array('from' => 'Server Notification <server_notification@aestheticpeople.com>',
         'to' => $to,
         'subject' => $subject,
-        'text' => $message));*/
+        'text' => $message));
+    $message = 'Your network 100% Timed out, pls check and revert to me <br />Regards <br />NOC';
+    $result2 = $mg->sendMessage($domain, array('from' => 'Server Notification <server_notification@aestheticpeople.com>',
+        'to' => $provider_email,
+        'subject' => $subject,
+        'text' => $message));
     //mail('youremail@gmail.com', 'Monitoring', $host.' down');
 }
 
@@ -43,7 +48,13 @@ foreach($results as $result) {
     $id = $result['id'];
     $server_name = $result['server_name'];
     $host = $result['ip_address'];
-    if (!check($host)) {
+    $port = $result['port'];
+
+    if($port == null)
+        $port = 80;
+
+    $email = $result['email'];
+    if (!check($host, $port)) {
         $var = array(
             'status' => 0
         );
@@ -52,7 +63,7 @@ foreach($results as $result) {
         );
         $MySQL->Update('servers', $var, $where);
         echo $server_name. ' ('.$host.')' .' Down'."\n";
-        alert($host, $server_name);
+        alert($host, $server_name, $email);
     } else {
         $var = array(
             'status' => 1

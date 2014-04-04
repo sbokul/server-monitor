@@ -60,3 +60,20 @@ CREATE TABLE IF NOT EXISTS `users` (
 
 INSERT INTO `users` (`id`, `user_name`, `password`, `create_date`) VALUES
 (1, 'admin', 'e10adc3949ba59abbe56e057f20f883e', '2014-03-29');
+
+
+
+
+
+CREATE TABLE IF NOT EXISTS `servers` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `server_name` varchar(255) NOT NULL,
+  `ip_address` varchar(255) NOT NULL,
+  `port` varchar(255) NOT NULL,
+  `provider` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `phone` varchar(255) NOT NULL,
+  `status` tinyint(1) NOT NULL,
+  `create_date` date NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=14 ;

@@ -7,10 +7,18 @@ require_once('include/config.php');
 $MySQL = new MySQL(DB_NAME, USER_NAME, PASSWORD, HOST);
 $serverName = $_POST['serverName'];
 $ipAddress = $_POST['ipAddress'];
+$port = $_POST['port'];
+$provider = $_POST['provider'];
+$email = $_POST['email'];
+$phone = $_POST['phone'];
 
 $vars = array(
     'server_name' => $serverName,
     'ip_address' => $ipAddress,
+    'port' => $port,
+    'provider' => $provider,
+    'email' => $email,
+    'phone' => $phone,
     'status' => 0,
     'create_date' => date('Y-m-d')
 );
