@@ -63,8 +63,6 @@ INSERT INTO `users` (`id`, `user_name`, `password`, `create_date`) VALUES
 
 
 
-
-
 CREATE TABLE IF NOT EXISTS `servers` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `server_name` varchar(255) NOT NULL,
@@ -74,6 +72,17 @@ CREATE TABLE IF NOT EXISTS `servers` (
   `email` varchar(255) NOT NULL,
   `phone` varchar(255) NOT NULL,
   `status` tinyint(1) NOT NULL,
+  `mail_status` tinyint(1) NOT NULL,
   `create_date` date NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=14 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=15 ;
+
+--
+-- Dumping data for table `servers`
+--
+
+INSERT INTO `servers` (`id`, `server_name`, `ip_address`, `port`, `provider`, `email`, `phone`, `status`, `mail_status`, `create_date`) VALUES
+(8, 'VOIP Server 2', '209.40.98.14', '', '', '', '', 1, 0, '2014-03-30'),
+(6, 'VOIP Server', '209.40.98.13', '', '', '', '', 1, 0, '2014-03-30'),
+(10, 'Device Server 2', '209.190.50.198', '', '', 'bokul@horoppa.com', '', 0, 1, '2014-03-30'),
+(14, 'Device Server', '103.31.155.138', '1670', 'test', 'bokul@horoppa.com', '01717251417', 1, 0, '2014-04-04');

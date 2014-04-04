@@ -21,7 +21,7 @@ function check($host, $port) {
 function alert($host, $server_name, $provider_email) {
     $mg = new Mailgun("key-35nnmiuxrw9vwg-ocgthgy4jztyk8b34");
     $email_from = 'server_notification@aestheticpeople.com';
-    $to = 'carbontsb@gmail.com';
+    $to = 'shakil.bokul@gmail.com';
     $subject = $server_name.' ('.$host.') Down';
 
     $message = $server_name.' ('.$host.') Down';
@@ -33,12 +33,18 @@ function alert($host, $server_name, $provider_email) {
         'to' => $to,
         'subject' => $subject,
         'text' => $message));
-    $message = 'Your network 100% Timed out, pls check and revert to me <br />Regards <br />NOC';
-    $result2 = $mg->sendMessage($domain, array('from' => 'Server Notification <server_notification@aestheticpeople.com>',
-        'to' => $provider_email,
-        'subject' => $subject,
-        'text' => $message));
-    //mail('youremail@gmail.com', 'Monitoring', $host.' down');
+    if(!empty($provider_email)) {
+        $message2 = "Your network 100% Timed out, pls check and revert to me \nRegards \nNOC";
+        $result2 = $mg->sendMessage($domain, array('from' => 'Server Notification <server_notification@aestheticpeople.com>',
+            'to' => $provider_email,
+            'subject' => $subject,
+            'text' => $message2));
+    }
+
+    if($result2->http_response_code == 200) {
+        return true;
+    }
+    return false;
 }
 
 $MySQL = new MySQL(DB_NAME, USER_NAME, PASSWORD, HOST);
@@ -49,6 +55,7 @@ foreach($results as $result) {
     $server_name = $result['server_name'];
     $host = $result['ip_address'];
     $port = $result['port'];
+    $mail_status = $result['mail_status'];
 
     if($port == null)
         $port = 80;
@@ -63,10 +70,22 @@ foreach($results as $result) {
         );
         $MySQL->Update('servers', $var, $where);
         echo $server_name. ' ('.$host.')' .' Down'."\n";
-        alert($host, $server_name, $email);
+        $alert_status = 0;
+        if($mail_status == 0)
+            $alert_status = alert($host, $server_name, $email);
+        if($alert_status == true) {
+            $var = array(
+                'mail_status' => 1
+            );
+            $where = array(
+                'id' => $id
+            );
+            $MySQL->Update('servers', $var, $where);
+        }
     } else {
         $var = array(
-            'status' => 1
+            'status' => 1,
+            'mail_status' => 0
         );
         $where = array(
             'id' => $id
