@@ -21,7 +21,7 @@ function check($host, $port) {
 function alert($host, $server_name, $provider_email) {
     $mg = new Mailgun("key-35nnmiuxrw9vwg-ocgthgy4jztyk8b34");
     $email_from = 'server_notification@aestheticpeople.com';
-    $to = 'shakil.bokul@gmail.com';
+    $to = 'carbontsb@gmail.com';
     $subject = $server_name.' ('.$host.') Down';
 
     $message = $server_name.' ('.$host.') Down';
@@ -47,6 +47,36 @@ function alert($host, $server_name, $provider_email) {
     return false;
 }
 
+function alert_up($host, $server_name, $provider_email) {
+    $mg = new Mailgun("key-35nnmiuxrw9vwg-ocgthgy4jztyk8b34");
+    $email_from = 'server_notification@aestheticpeople.com';
+    $to = 'carbontsb@gmail.com';
+    $subject = $server_name.' ('.$host.') Up Now';
+
+    $message = $server_name.' ('.$host.') Up Now';
+
+    $domain = "aestheticpeople.com";
+
+    # Now, compose and send your message.
+    $result = $mg->sendMessage($domain, array('from' => 'Server Notification <server_notification@aestheticpeople.com>',
+        'to' => $to,
+        'subject' => $subject,
+        'text' => $message));
+    if(!empty($provider_email)) {
+        $message2 = "Your network up and running again.\nRegards \nNOC";
+        $result2 = $mg->sendMessage($domain, array('from' => 'Server Notification <server_notification@aestheticpeople.com>',
+            'to' => $provider_email,
+            'subject' => $subject,
+            'text' => $message2));
+    }
+
+    if($result2->http_response_code == 200) {
+        return true;
+    }
+    return false;
+}
+
+
 $MySQL = new MySQL(DB_NAME, USER_NAME, PASSWORD, HOST);
 $results = $MySQL->Select('servers');
 
@@ -56,6 +86,7 @@ foreach($results as $result) {
     $host = $result['ip_address'];
     $port = $result['port'];
     $mail_status = $result['mail_status'];
+    $current_status = $result['status'];
 
     if($port == null)
         $port = 80;
@@ -83,6 +114,9 @@ foreach($results as $result) {
             $MySQL->Update('servers', $var, $where);
         }
     } else {
+        if($current_status == 0) {
+            alert_up($host, $server_name, $email);
+        }
         $var = array(
             'status' => 1,
             'mail_status' => 0
